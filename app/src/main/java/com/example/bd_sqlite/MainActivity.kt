@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.example.bd_sqlite.database.DatabaseHelper
 import com.example.bd_sqlite.database.ProdutoDAO
 import com.example.bd_sqlite.databinding.ActivityMainBinding
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     private fun remover() {
 
         val produtoDAO = ProdutoDAO(this)
-        produtoDAO.remover(3)
+        produtoDAO.remover(9)
 
     }
 
@@ -58,11 +59,16 @@ class MainActivity : AppCompatActivity() {
 
         val produtoDAO = ProdutoDAO(this)
         val listaProdutos = produtoDAO.listar()
-        
+
+        var texto = ""
         if(listaProdutos.isNotEmpty()){
             listaProdutos.forEach{produto ->
+                texto += "${produto.idProduto} - ${produto.titulo} \n"
                 Log.i("info_db", "${produto.idProduto} - ${produto.titulo}")
             }
+            binding.txtResultado.text = texto
+        } else {
+            binding.txtResultado.text = "Nenhum item cadastrado!"
         }
     }
 
@@ -70,7 +76,18 @@ class MainActivity : AppCompatActivity() {
         val titulo = binding.editProduto.textAlignment.toString()
         val produtoDAO = ProdutoDAO(this)
         val produto = Produto( -1, titulo, "descricacao...")
-        produtoDAO.salvar(produto)
+       if (produtoDAO.salvar(produto)){
+           Toast.makeText(
+               this,
+               "Sucesso ao cadastrar o Produto",
+               Toast.LENGTH_SHORT).show()
+               // binding.editProduto.setText("")
+       }else {
+           Toast.makeText(
+               this,
+               "Erro ao cadastrar o Produto",
+               Toast.LENGTH_SHORT).show()
+       }
 
     }
 

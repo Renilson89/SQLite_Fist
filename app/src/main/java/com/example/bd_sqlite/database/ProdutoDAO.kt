@@ -1,20 +1,29 @@
 package com.example.bd_sqlite.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.util.Log
 import com.example.bd_sqlite.model.Produto
 
 class ProdutoDAO(context: Context) : IProdutoDAO {
 
-    val escrita = DatabaseHelper(context).writableDatabase
-    val leitura = DatabaseHelper(context).readableDatabase
+   private val escrita = DatabaseHelper(context).writableDatabase
+   private val leitura = DatabaseHelper(context).readableDatabase
 
 
     override fun salvar(produto: Produto): Boolean {
-        val titulo = produto.titulo
-        val sql = "INSERT INTO produtos VALUES(null, '$titulo ', 'Descricação.');"
+        //val titulo = produto.titulo
+       // val sql = "INSERT INTO produtos VALUES(null, '$titulo ', 'Descricação.');"
+       val valores = ContentValues()
+        valores.put("${DatabaseHelper.TITULO}", produto.titulo)
+        valores.put("${DatabaseHelper.DESCRICAO}", produto.descricao)
         try {
-            escrita.execSQL(sql)
+            //escrita.execSQL(sql)
+            escrita.insert(
+                DatabaseHelper.TABELA_PRODUTOS,
+                null,
+                valores
+            )
             Log.i("info_db", "Sucesso ao Inserir")
 
         }catch (e: Exception){
@@ -68,8 +77,8 @@ class ProdutoDAO(context: Context) : IProdutoDAO {
             val titulo = cursor.getString(indiceTitulo)
             val descricao = cursor.getString(indiceDescricao)
             //Log.i("info_db", "id: $idProduto - $titulo")
-            val produto = Produto(idProduto, titulo, descricao)
-            listaProdutos.add(produto)
+            val produto =
+            listaProdutos.add(Produto(idProduto, titulo, descricao))
         }
         return listaProdutos
     }
