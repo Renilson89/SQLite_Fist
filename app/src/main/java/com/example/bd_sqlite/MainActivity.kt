@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import com.example.bd_sqlite.database.DatabaseHelper
+import com.example.bd_sqlite.database.ProdutoDAO
 import com.example.bd_sqlite.databinding.ActivityMainBinding
+import com.example.bd_sqlite.model.Produto
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,38 +30,48 @@ class MainActivity : AppCompatActivity() {
             btnListar.setOnClickListener {
                 Listar()
             }
+            btnAtualizar.setOnClickListener {
+                atualizar()
+            }
+            btnRemover.setOnClickListener {
+                remover()
+            }
   }
 
     }
 
+    private fun remover() {
+
+        val produtoDAO = ProdutoDAO(this)
+        produtoDAO.remover(3)
+
+    }
+
+    private fun atualizar() {
+        val titulo = binding.editProduto.textAlignment.toString()
+        val produtoDAO = ProdutoDAO(this)
+        val produto = Produto( -1, titulo, "descricacao...")
+        produtoDAO.atualizar(produto)
+    }
+
     private fun Listar(){
 
-        val sql = "SELECT * FROM ${DatabaseHelper.TABELA_PRODUTOS};"
-        val cursor = bancoDados.readableDatabase.rawQuery(sql, null)
-
-        val indiceId = cursor.getColumnIndex("${DatabaseHelper.ID_PRODUTOS}")
-        val indiceTitulo = cursor.getColumnIndex("${DatabaseHelper.TITULO}")
-        val indiceDescricao = cursor.getColumnIndex("${DatabaseHelper.DESCRICAO}")
-
-        while (cursor.moveToNext()){
-           val idProduto = cursor.getInt(indiceId)
-            val titulo = cursor.getString(indiceTitulo)
-            val descricao = cursor.getString(indiceDescricao)
-            Log.i("info_db", "id: $idProduto - $titulo")
+        val produtoDAO = ProdutoDAO(this)
+        val listaProdutos = produtoDAO.listar()
+        
+        if(listaProdutos.isNotEmpty()){
+            listaProdutos.forEach{produto ->
+                Log.i("info_db", "${produto.idProduto} - ${produto.titulo}")
+            }
         }
     }
 
     private fun salvar() {
-
         val titulo = binding.editProduto.textAlignment.toString()
-        val sql = "INSERT INTO produtos VALUES(null, '$titulo', 'Descricação.');"
-        try {
-            bancoDados.writableDatabase.execSQL(sql)
-            Log.i("info_db", "Sucesso ao Inserir")
+        val produtoDAO = ProdutoDAO(this)
+        val produto = Produto( -1, titulo, "descricacao...")
+        produtoDAO.salvar(produto)
 
-        }catch (e: Exception){
-            Log.i("info_db", "Erro ao Inserir")
-        }
     }
 
 
