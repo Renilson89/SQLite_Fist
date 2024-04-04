@@ -34,12 +34,19 @@ class ProdutoDAO(context: Context) : IProdutoDAO {
     }
 
     override fun atualizar(produto: Produto): Boolean {
-
-        val titulo = produto.titulo
+        /*val titulo = produto.titulo
         val idProduto = produto.idProduto
-        val sql = "UPDATE produtos SET titulo = '$titulo' WHERE id_produto = ${idProduto};"
+        val sql = "UPDATE ${DatabaseHelper.TABELA_PRODUTOS} " +
+                "  SET ${DatabaseHelper.TITULO} = '$titulo' WHERE ${DatabaseHelper.ID_PRODUTOS} = $idProduto;"*/
+        val valores = ContentValues()
+        valores.put("${DatabaseHelper.TITULO}", produto.titulo)
+        valores.put("${DatabaseHelper.DESCRICAO}", produto.descricao)
+        val args = arrayOf(produto.idProduto.toString())
         try {
-            escrita.execSQL(sql)
+            escrita.update(DatabaseHelper.TABELA_PRODUTOS, valores,
+             "id_produto = ?",
+                args)
+            //escrita.execSQL(sql)
             Log.i("info_db", "Sucesso ao Atulizar!!")
 
         }catch (e: Exception){
@@ -50,9 +57,14 @@ class ProdutoDAO(context: Context) : IProdutoDAO {
     }
 
     override fun remover(idProduto: Int): Boolean {
-        val sql = "DELETE FROM ${DatabaseHelper.TABELA_PRODUTOS} WHERE ${DatabaseHelper.ID_PRODUTOS} = $idProduto"
+        /*val sql = "DELETE FROM ${DatabaseHelper.TABELA_PRODUTOS} WHERE ${DatabaseHelper.ID_PRODUTOS} = $idProduto"*/
+        val args = arrayOf(idProduto.toString())
         try {
-            escrita.execSQL(sql)
+            //escrita.execSQL(sql)
+            escrita.delete(DatabaseHelper.TABELA_PRODUTOS,
+                "id_produto = ?",
+                args
+            )
             Log.i("info_db", "Sucesso ao Remover")
 
         }catch (e: Exception){

@@ -44,14 +44,14 @@ class MainActivity : AppCompatActivity() {
     private fun remover() {
 
         val produtoDAO = ProdutoDAO(this)
-        produtoDAO.remover(9)
+        produtoDAO.remover(1)
 
     }
 
     private fun atualizar() {
         val titulo = binding.editProduto.textAlignment.toString()
         val produtoDAO = ProdutoDAO(this)
-        val produto = Produto( -1, titulo, "descricacao...")
+        val produto = Produto( 1, titulo, "descricacao...")
         produtoDAO.atualizar(produto)
     }
 
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                this,
                "Sucesso ao cadastrar o Produto",
                Toast.LENGTH_SHORT).show()
-               // binding.editProduto.setText("")
+                //binding.editProduto.setText("")
        }else {
            Toast.makeText(
                this,
